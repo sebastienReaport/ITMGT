@@ -44,7 +44,31 @@ def optimal_diet(
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    pass
+    minCostIncurred = 0
+    optimalCorn = 0
+    optimalSoy = 0
+    
+    for c in range(801):
+        s = 800 - c
+        proteinComposition = (c*corn_protein_composition + s*soymeal_protein_composition) / (c+s)
+        fiberComposition = (c*corn_fiber_composition + s*soymeal_fiber_composition) / (c+s)
+        cost = c*corn_cost_per_pound + s*soymeal_cost_per_pound
+            
+        if proteinComposition <= 0.3 or fiberComposition >= 0.05:
+            continue
+        else:
+            if optimalCorn == 0 and optimalSoy == 0:
+                optimalCorn = c
+                optimalSoy = s
+                minCostIncurred = cost
+            elif cost <= minCostIncurred:
+                optimalCorn = c
+                optimalSoy = s
+                minCostIncurred = cost
+            else:
+                continue
+    
+    return (optimalCorn, optimalSoy)
 
 def optimal_investments(
     personal_loan_rate, personal_loan_writeoff_ratio,
@@ -108,4 +132,45 @@ def optimal_investments(
     '''
     # Replace `pass` with your code. 
     # Stay within the function. Only use the parameters as input. The function should return your answer.
-    pass
+    maxIncome = 0
+    optimalInvestments = [0,0,0,0,0] # Personal, Car, Home, Farm, Commercial
+    
+    for per in range(1,constraint_max_pesos):
+        for car in range(1,constraint_max_pesos):
+            for home in range(1,constraint_max_pesos):
+                for farm in range(1,constraint_max_pesos):
+                    for comm in range(1,constraint_max_pesos):
+                        
+                        totalInvestment = per + car + home + farm + comm
+                        farmCommRatio = farm + comm / totalInvestment
+                        homeRatio = home / (home + per + car)
+                        badRatio = (per*personal_loan_writeoff_ratio + car*car_loan_writeoff_ratio + home*home_loan_writeoff_ratio +\ farm*farm_loan_writeoff_ratio + comm*commercial_loan_writeoff_ratio) / totalInvestment
+                        investmentIncome = per*(1 - personal_loan_writeoff_ratio) + car*(1 - car_loan_writeoff_ratio) + home*(1 -\ home_loan_writeoff_ratio) + farm*(1 - farm_loan_writeoff_ratio) + comm*(1 - commercial_loan_writeoff_ratio)
+                        
+                        if totalInvestment > constraint_max_pesos:
+                            continue
+                        elif farmCommRatio < 40:
+                            continue
+                        elif homeRatio < 50:
+                            continue
+                        elif badRatio > 0.04:
+                            continue
+                        else:
+                            if optimalInvestments[0] == 0 and optimalInvestments[1] == 0 and optimalInvestments[2] == 0 and optimalInvestments[3] == 0 and optimalInvestments[4] == 0:
+                                optimalInvestments[0] = per
+                                optimalInvestments[1] = car
+                                optimalInvestments[2] = home
+                                optimalInvestments[3] = farm
+                                optimalInvestments[4] = comm
+                                maxIncome = investmentIncome
+                            elif investmentIncome > maxIncome:
+                                optimalInvestments[0] = per
+                                optimalInvestments[1] = car
+                                optimalInvestments[2] = home
+                                optimalInvestments[3] = farm
+                                optimalInvestments[4] = comm
+                                maxIncome = investmentIncome
+                            else:
+                                continue
+    
+    return (optimalInvestments[0],optimalInvestments[1],optimalInvestments[2],optimalInvestments[3],optimalInvestments[4])
