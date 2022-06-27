@@ -44,7 +44,7 @@ def shift_letter(letter, shift):
             return " "
         elif letter == letters[i]:
             newLetter = i + shift
-            if newLetter>25:
+            while newLetter > 25:
                 newLetter -= 26
             return letters[newLetter]
 
@@ -79,7 +79,7 @@ def caesar_cipher(message, shift):
         for j in range(len(letters)):
             if message[i] == letters[j]:
                 newLetter = j + shift
-                if newLetter>25:
+                while newLetter > 25:
                     newLetter -= 26
                 newMessage += str(letters[newLetter])
     return newMessage
